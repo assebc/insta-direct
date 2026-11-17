@@ -16,8 +16,9 @@ concurrency:
   group: android-apk-${{ github.ref }}
   cancel-in-progress: false
 
+# Write access lets the job create releases.
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   apk:
@@ -62,3 +63,17 @@ jobs:
           path: android/app/build/outputs/apk/release/app-release.apk
           if-no-files-found: error
           retention-days: 30
+
+      # Every build becomes a GitHub Release, so the newest APK is always at
+      # https://github.com/<owner>/<repo>/releases/latest/download/instadirect.apk
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: build-${{ github.run_number }}
+        run: |
+          cp android/app/build/outputs/apk/release/app-release.apk instadirect.apk
+          gh release create "$TAG" instadirect.apk \
+            --target "$GITHUB_SHA" \
+            --title "InstaDirect $TAG" \
+            --notes "Built from ${GITHUB_SHA::7}. Debug-signed personal build." \
+            --latest
