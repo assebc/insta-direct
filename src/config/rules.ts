@@ -20,6 +20,8 @@ export const settings = {
   hideWebNav: true,
   /** Posts and reels opened from a chat can't be scrolled (no "more posts", no next reel). */
   lockViewerScroll: true,
+  /** Hide the Notes tray (short status bubbles) at the top of the inbox. */
+  hideNotes: true,
 } as const;
 
 /** Patterns are strings so the same rules can be serialized into the injected script. */
@@ -174,13 +176,21 @@ export type TextBlockRule = {
   text: RegExp;
   container: string;
   up: number;
-  onlyWhen?: 'hideAppBanners';
+  /**
+   * Hide the closest horizontally scrolling ancestor instead (a carousel or
+   * tray). If there is none, nothing is hidden, so a wrong guess can't take
+   * out the whole page.
+   */
+  scroller?: boolean;
+  onlyWhen?: 'hideAppBanners' | 'hideNotes';
 };
 
 export const HIDDEN_TEXT_BLOCKS: TextBlockRule[] = [
   { text: /^More reels/i, container: 'section', up: 4 },
   { text: /^More posts from/i, container: 'section', up: 4 },
   { text: /^Suggested reels/i, container: 'article, section', up: 4 },
+  // Notes tray above the chat list; "Your note" is the caption under your own avatar.
+  { text: /^(Your note|Leave a note|Share a note|Note\.\.\.)$/i, container: '', up: 0, scroller: true, onlyWhen: 'hideNotes' },
   // "Use the app" / "Open app" banners and modals.
   { text: /^(Use the app|Use app|Open app|Open Instagram|Get the app|Open in app)$/i, container: '[role="dialog"]', up: 2, onlyWhen: 'hideAppBanners' },
   { text: /^(See more from .+ in the app|Instagram is better in the app|Get the full experience)/i, container: '[role="dialog"]', up: 3, onlyWhen: 'hideAppBanners' },

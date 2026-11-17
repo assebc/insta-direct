@@ -50,6 +50,7 @@ export function buildGuardScript(): string {
       flags: b.text.flags,
       container: b.container,
       up: b.up,
+      scroller: !!b.scroller,
     })),
     darkTheme: settings.darkTheme,
     hideWebNav: settings.hideWebNav,
@@ -65,7 +66,7 @@ export function buildGuardScript(): string {
   var LABELS = CONFIG.labels.map(function (l) { return { re: re(l.pattern), label: l.label }; });
   var VIEWER = re(CONFIG.viewer);
   var TEXT_BLOCKS = CONFIG.textBlocks.map(function (b) {
-    return { re: new RegExp(b.source, b.flags), container: b.container, up: b.up };
+    return { re: new RegExp(b.source, b.flags), container: b.container, up: b.up, scroller: b.scroller };
   });
 
   function post(msg) {
@@ -174,6 +175,22 @@ export function buildGuardScript(): string {
   }
 
   // ---- text-based module suppression ----
+  /**
+   * Closest horizontal tray around el (e.g. the Notes tray), or null. A
+   * vertical scroller (the chat list) also computes overflow-x to auto, so
+   * only short, wide boxes count.
+   */
+  function scrollerOf(el) {
+    for (var n = el.parentElement; n && n !== document.body; n = n.parentElement) {
+      var ox = getComputedStyle(n).overflowX;
+      if (ox !== 'auto' && ox !== 'scroll') continue;
+      var r = n.getBoundingClientRect();
+      if (r.height > 0 && r.height < 220 && r.width > r.height * 1.5) return n;
+      return null;
+    }
+    return null;
+  }
+
   function hideTextBlocks(root) {
     if (!TEXT_BLOCKS.length || !root.querySelectorAll) return;
     var nodes = root.querySelectorAll('span, h2, h3, h4, div[role="heading"], button, a, div[role="button"]');
@@ -185,8 +202,10 @@ export function buildGuardScript(): string {
       for (var j = 0; j < TEXT_BLOCKS.length; j++) {
         var b = TEXT_BLOCKS[j];
         if (!b.re.test(text)) continue;
-        var target = el.closest(b.container);
-        if (!target) {
+        var target = b.scroller ? scrollerOf(el) : el.closest(b.container);
+        // The tray may not be laid out yet; try again on the next DOM change.
+        if (b.scroller && !target) break;
+        if (!target && !b.scroller) {
           target = el;
           for (var k = 0; k < b.up && target.parentElement; k++) target = target.parentElement;
         }
