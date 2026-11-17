@@ -1,13 +1,40 @@
-# InstaDirect (no-doom-scrolling-instagram)
+<p align="center">
+  <img src="assets/icon.png" alt="InstaDirect icon" width="128" height="128">
+</p>
 
-Personal Expo app that wraps Instagram's mobile web and keeps only one thing: **your messages**.
-You can read and send DMs, open a post or reel someone sends you, and that's it. There is no feed,
-no profiles, no Reels tab, no Explore and no Stories, and nothing you open can be scrolled.
+<h1 align="center">InstaDirect</h1>
+
+<p align="center"><b>Instagram's DMs, and nothing else.</b></p>
+
+## What is this?
+
+InstaDirect is a personal mobile app (iOS and Android, built with Expo) for people who want to keep talking to
+friends on Instagram without getting pulled into the feed. It loads Instagram's own mobile website inside the app
+and strips away everything except **your messages**.
+
+What you get:
+
+- Your inbox, chats and message requests, working the way they do on Instagram's mobile site.
+- Posts and reels that someone sends you in a chat open in a viewer with a native back button. You see that one
+  post: no scrolling to the next one, and a video plays once and then offers "Back to chat" or "Replay".
+- On Android, Instagram's message notifications show up as InstaDirect notifications, so you never need to open
+  the real app (see [Message notifications](#message-notifications-android)).
+
+What you don't get: the feed, Reels, Explore, Stories, profiles or Instagram's notifications tab. Links to those
+do nothing, and nothing you open can be scrolled into an endless feed.
+
+You log in with your normal Instagram account. InstaDirect has no server of its own: it talks only to Instagram,
+and your session stays in the WebView on your device.
 
 The original [PRD](./PRD%20Personal%20Instagram%20Replacement.md) described a broader "Instagram without Reels" app;
 InstaDirect is the narrower DMs-only version of it.
 
-Personal use only: not for the App Store or Google Play.
+Personal use only: not for the App Store or Google Play, and not affiliated with Instagram or Meta.
+
+## Install (Android)
+
+Every push to `master` builds an APK and publishes it as a GitHub Release:
+[latest APK](https://github.com/assebc/insta-direct/releases/latest/download/instadirect.apk).
 
 ## Run it
 
