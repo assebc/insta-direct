@@ -1,0 +1,58 @@
+{
+  "expo": {
+    "name": "InstaDirect",
+    "slug": "instadirect",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "app.instadirect.personal",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Take photos and videos to send in your messages.",
+        "NSMicrophoneUsageDescription": "Record voice messages and videos to send in your messages.",
+        "NSPhotoLibraryUsageDescription": "Choose photos and videos to send in your messages."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#000000",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false,
+      "package": "app.instadirect.personal",
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "backgroundColor": "#000000",
+    "plugins": [
+      "expo-font",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 120,
+          "resizeMode": "contain",
+          "backgroundColor": "#000000"
+        }
+      ],
+      [
+        "expo-audio",
+        {
+          "microphonePermission": "Record voice messages and videos to send in your messages.",
+          "enableBackgroundPlayback": false
+        }
+      ],
+      "expo-asset"
+    ],
+    "scheme": "instadirect"
+  }
+}
