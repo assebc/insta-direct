@@ -1,0 +1,26 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+  <!-- Android 13+: needed to post the forwarded notifications. -->
+  <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+  <!-- Package visibility (Android 11+): to check whether Instagram is installed. -->
+  <queries>
+    <package android:name="com.instagram.android" />
+    <package android:name="com.instagram.lite" />
+  </queries>
+
+  <application>
+    <!--
+      Bound by the system once the user grants Notification access, so it runs
+      even when InstaDirect is closed. Only the system can bind it.
+    -->
+    <service
+      android:name="expo.modules.instadirectnotifications.InstagramNotificationListener"
+      android:exported="true"
+      android:label="InstaDirect message notifications"
+      android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+      <intent-filter>
+        <action android:name="android.service.notification.NotificationListenerService" />
+      </intent-filter>
+    </service>
+  </application>
+</manifest>
