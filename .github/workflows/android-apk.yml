@@ -9,6 +9,11 @@ on:
   push:
     branches: [master]
   workflow_dispatch:
+    inputs:
+      release:
+        description: Existing release tag to replace the APK on (e.g. v1.1.0). Empty creates a new build-N release.
+        required: false
+        type: string
 
 # One build at a time per branch; a newer push or manual run waits instead
 # of cancelling the build already in progress.
@@ -66,12 +71,19 @@ jobs:
 
       # Every build becomes a GitHub Release, so the newest APK is always at
       # https://github.com/<owner>/<repo>/releases/latest/download/instadirect.apk
+      # A manual run with `release` set replaces the APK on that existing release instead.
       - name: Publish GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
           TAG: build-${{ github.run_number }}
+          RELEASE: ${{ inputs.release }}
         run: |
           cp android/app/build/outputs/apk/release/app-release.apk instadirect.apk
+          if [ -n "$RELEASE" ]; then
+            gh release upload "$RELEASE" instadirect.apk --clobber
+            gh release edit "$RELEASE" --latest
+            exit 0
+          fi
           gh release create "$TAG" instadirect.apk \
             --target "$GITHUB_SHA" \
             --title "InstaDirect $TAG" \
